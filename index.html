@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web</title>
+</head>
+
+<body>
+    <input class="message" type="text" placeholder="Digite uma mensagem">
+    <p class="response"></p>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const input = document.querySelector('.message')
+        const p = document.querySelector('.response')
+        const iosocket = io('http://localhost:3333')
+
+        iosocket.on('server1 web', showMessage)
+
+        function emit() {
+            const { value } = input
+            iosocket.emit('web server1', value)
+        }
+
+        function showMessage(content) {
+            p.innerHTML = content
+        }
+
+        function main() {
+            input.addEventListener('input', emit)
+        }
+
+        main()
+    </script>
+</body>
+
+</html>
