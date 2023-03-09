@@ -16,14 +16,14 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
 
-  socket.on("web server1", (message) => {
+  socket.on("web server1", (images) => {
     console.log("Mensagem recebida. Encaminhando para server 2");
-    io.emit("server1 server2", message);
+    io.emit("server1 server2", images);
   });
 
-  socket.on("server2 server1", (message) => {
+  socket.on("server2 server1", (images) => {
     console.log("Mensagem recebida. Encaminhando para web");
-    io.emit("server1 web", message);
+    io.emit("server1 web", images);
   });
 });
 
