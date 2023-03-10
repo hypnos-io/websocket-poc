@@ -14,21 +14,21 @@ iosocket.on("server1 server2", async (images) => {
 
   for (let image of images) {
     try {
-      const { data } = await axios.get(image);
+      const { data } = await axios.get(image); // Busca imagem enviando requisição para retorno do Buffer
       colorImages.push(data);
     } catch (error) {}
   }
 
   const result = [];
   for (let image of colorImages) {
-    const newImage = await sharp(image).grayscale().toBuffer();
+    const newImage = await sharp(image).grayscale().toBuffer(); // Realiza o processamento em cada imagem
     result.push(newImage);
   }
 
   console.log("Processo finalizado. Enviando imagem de volta...");
   iosocket.emit(
     "server2 server1",
-    result.map((i) => i.toString("base64"))
+    result.map((i) => i.toString("base64")) // Envia imagens no formato base64
   );
 });
 

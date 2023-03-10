@@ -65,18 +65,18 @@
 
         const imagesDiv = document.querySelector('.images')
         const timeTitle = document.querySelector('.time')
-        const iosocket = io('http://localhost:3333')
+        const iosocket = io('http://localhost:3333') // Conecta com servidor websocket
 
         let images = []
 
-        if (navigator.mediaDevices.getUserMedia) {
+        if (navigator.mediaDevices.getUserMedia) { // Conecta web cam do usuário
             navigator.mediaDevices.getUserMedia({
                 video: true
             })
                 .then(function (stream) {
                     const track = stream.getVideoTracks()[0]
                     const imageCapture = new ImageCapture(track)
-                    video.srcObject = stream;
+                    video.srcObject = stream; // Adiciona Stream de dados para a tag de video 
                 })
                 .catch(function (error) {
                     console.log("Something went wrong!");
@@ -91,17 +91,18 @@
             canvas.height = video.videoHeight;
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const buffer = canvas.toDataURL('image/png');
+            const buffer = canvas.toDataURL('image/png'); // Transforma imagem em base64
             if (buffer.length > 10)
                 images.push(buffer)
             if (images.length === 2) {
-                iosocket.emit('web server1', images)
+                iosocket.emit('web server1', images) // Envia imagem depois de uma faixa de tempo
                 images = []
             }
         }
 
-        setInterval(sendImage, 1000)
+        setInterval(sendImage, 1000) // Captura a imagem da webcam a cada 1s
         iosocket.on('server1 web', showImages)
+
         function showImages(result, event) {
             const now = new Date()
             const hours = `00${now.getHours()}`.slice(-2)
@@ -111,7 +112,7 @@
             imagesDiv.innerHTML = ""
             result.map(image => {
                 const img = new Image()
-                img.src = `data:image/jpg;base64,${image}`
+                img.src = `data:image/jpg;base64,${image}` // Recebe imagem e adiciona ao src da tag de imagem com correção de base64
                 img.classList.add('image')
                 imagesDiv.appendChild(img)
             })
