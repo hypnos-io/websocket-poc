@@ -66,6 +66,7 @@
         const imagesDiv = document.querySelector('.images')
         const timeTitle = document.querySelector('.time')
         const iosocket = io('http://localhost:3333') // Conecta com servidor websocket
+        let connectedSocket;
 
         let images = []
 
@@ -84,6 +85,11 @@
         }
 
 
+        iosocket.on('connect', (socket) => {
+            setInterval(sendImage, 1000) // Captura a imagem da webcam a cada 1s
+            iosocket.on('server1 web', showImages)
+        })
+
         function sendImage() {
             if (!video.srcObject) return
             const canvas = document.createElement('canvas');
@@ -94,14 +100,12 @@
             const buffer = canvas.toDataURL('image/png'); // Transforma imagem em base64
             if (buffer.length > 10)
                 images.push(buffer)
-            if (images.length === 2) {
+            if (images.length == 2) {
                 iosocket.emit('web server1', images) // Envia imagem depois de uma faixa de tempo
                 images = []
             }
         }
 
-        setInterval(sendImage, 1000) // Captura a imagem da webcam a cada 1s
-        iosocket.on('server1 web', showImages)
 
         function showImages(result, event) {
             const now = new Date()
