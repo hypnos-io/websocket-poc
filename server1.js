@@ -11,6 +11,7 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  maxHttpBufferSize: 1e8
 });
 
 // Função que será executada quando o websocket iniciar
