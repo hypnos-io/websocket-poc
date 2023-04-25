@@ -9,9 +9,10 @@ const app = express();
 const iosocket = io("http://localhost:3333");
 
 iosocket.on("connect", () => {
-  iosocket.on("server1 server2", async (images) => {
+  iosocket.on("server1 server2", async (data) => {
     console.log("Processando imagem...");
     const colorImages = [];
+    const { id, images } = data;
 
     for (let image of images) {
       try {
@@ -29,7 +30,7 @@ iosocket.on("connect", () => {
     console.log("Processo finalizado. Enviando imagem de volta...");
     iosocket.emit(
       "server2 server1",
-      result.map((i) => i.toString("base64")) // Envia imagens no formato base64
+      { id, images: result.map((i) => i.toString("base64")) } // Envia imagens no formato base64
     );
   });
 });
