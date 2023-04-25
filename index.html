@@ -65,9 +65,9 @@
 
         const imagesDiv = document.querySelector('.images')
         const timeTitle = document.querySelector('.time')
-        const iosocket = io('http://localhost:3333') // Conecta com servidor websocket
-        let connectedSocket;
+        const iosocket = io('ws://localhost:3333') // Conecta com servidor websocket
 
+        const id = Math.floor(Math.random() * 10000000);
         let images = []
 
         if (navigator.mediaDevices.getUserMedia) { // Conecta web cam do usuário
@@ -85,7 +85,7 @@
         }
 
 
-        iosocket.on('connect', (socket) => {
+        iosocket.on('connect', () => {
             setInterval(sendImage, 1000) // Captura a imagem da webcam a cada 1s
             iosocket.on('server1 web', showImages)
         })
@@ -101,20 +101,23 @@
             if (buffer.length > 10)
                 images.push(buffer)
             if (images.length == 2) {
-                iosocket.emit('web server1', images) // Envia imagem depois de uma faixa de tempo
+                iosocket.emit('web server1', { id, images }) // Envia imagem depois de uma faixa de tempo
                 images = []
             }
         }
 
 
         function showImages(result, event) {
+            console.log(`ID recebido sessão: ${result.id}`)
             const now = new Date()
             const hours = `00${now.getHours()}`.slice(-2)
             const minutes = `00${now.getMinutes()}`.slice(-2)
             const seconds = `00${now.getSeconds()}`.slice(-2)
             timeTitle.innerHTML = `Atualizado em ${hours}:${minutes}:${seconds}`
             imagesDiv.innerHTML = ""
-            result.map(image => {
+            const { id: idRes, images: imagesRes } = result
+            console.log(idRes === id ? 'Recebendo corretamente' : 'Recebendo resposta de outro cliente')
+            imagesRes.map(image => {
                 const img = new Image()
                 img.src = `data:image/jpg;base64,${image}` // Recebe imagem e adiciona ao src da tag de imagem com correção de base64
                 img.classList.add('image')
